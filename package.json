@@ -1,0 +1,11 @@
+{
+  "name": "clean-react",
+  "version": "0.0.1",
+  "description": "Clean NodeJs React using TDD, Clean Architecture and Typescript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabriel Fabian",
+  "license": "GPL-3.0-or-later"
+}
