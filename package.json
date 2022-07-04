@@ -4,7 +4,10 @@
   "description": "Clean NodeJs React using TDD, Clean Architecture and Typescript",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
+    "test": "jest --passWithNoTests --silent --coverage=false --noStackTrace --runInBand",
+    "test:watch": "npm test -- --watch",
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:ci": "jest -- --runInBand",
     "prepare": "husky install"
   },
   "author": "Gabriel Fabian",
