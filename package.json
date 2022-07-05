@@ -4,7 +4,7 @@
   "description": "Clean NodeJs React using TDD, Clean Architecture and Typescript",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --open",
+    "start": "webpack serve --open",
     "test": "jest --passWithNoTests --silent --coverage=false --noStackTrace --runInBand --no-cache",
     "test:watch": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
@@ -37,6 +37,7 @@
     "lint-staged": "^13.0.3",
     "node-sass": "^7.0.1",
     "sass-loader": "^13.0.2",
+    "style-loader": "^3.3.1",
     "ts-jest": "^28.0.5",
     "ts-loader": "^9.3.1",
     "typescript": "^4.7.4",
