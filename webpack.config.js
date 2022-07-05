@@ -35,7 +35,9 @@ module.exports = {
     }]
   },
   devServer: {
-    contentBase: './public',
+    static: {
+      directory: './public'
+    },
     historyApiFallback: true,
     devMiddleware: {
       writeToDisk: true
