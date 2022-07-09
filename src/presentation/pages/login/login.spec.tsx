@@ -3,10 +3,11 @@ import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { faker } from '@faker-js/faker'
 import 'jest-localstorage-mock'
-import { cleanup, fireEvent, render, RenderResult, waitFor } from '@testing-library/react'
+import { cleanup, fireEvent, render, RenderResult, screen, waitFor } from '@testing-library/react'
 import Login from './login'
 import { ValidationStub, AuthenticationSpy } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
+import { act } from 'react-dom/test-utils'
 
 type SutTypes = {
   sut: RenderResult
@@ -151,6 +152,22 @@ describe('Login Component', () => {
       const errorMessage = sut.getByTestId('error-message')
       expect(errorMessage.textContent).toBe(error.message)
       expect(errorWrap.childElementCount).toBe(1)
+    })
+  })
+
+  test.only('Should clear error message on authentication retry', async () => {
+    const { sut, authenticationSpy } = makeSut()
+    const error = new InvalidCredentialsError()
+    jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error)
+    simulateValidSubmit(sut) // Populate errorMessage
+    await waitFor(() => {
+      const errorMessage = screen.queryAllByText(error.message)
+      expect(errorMessage.length).toBe(1)
+    })
+    act(() => { simulateValidSubmit(sut) })
+    await waitFor(() => {
+      const errorMessage = screen.queryAllByText(error.message)
+      expect(errorMessage.length).toBe(0)
     })
   })
 
