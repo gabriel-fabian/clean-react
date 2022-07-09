@@ -5,10 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack serve --open",
-    "test": "jest --passWithNoTests --silent --coverage=false --noStackTrace --runInBand --no-cache",
+    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand --no-cache",
     "test:watch": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
-    "test:ci": "jest -- --runInBand",
+    "test:ci": "jest --runInBand --coverage",
     "prepare": "husky install"
   },
   "author": "Gabriel Fabian",
