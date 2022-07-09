@@ -6,7 +6,7 @@ export class RequiredFieldValidation implements FieldValidation {
     readonly field: string
   ) {}
 
-  validate (_value: string): Error {
-    return new RequiredFieldError()
+  validate (value: string): Error {
+    return value ? null : new RequiredFieldError()
   }
 }
