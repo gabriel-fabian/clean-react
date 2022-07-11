@@ -1,6 +1,7 @@
 import React from 'react'
-import { render, RenderResult } from '@testing-library/react'
 import SignUp from './signup'
+import { render, RenderResult } from '@testing-library/react'
+import { Helper } from '@/presentation/test'
 
 type SutTypes = {
   sut: RenderResult
@@ -15,31 +16,15 @@ const makeSut = (): SutTypes => {
   }
 }
 
-const expectChildCount = (sut: RenderResult, fieldName: string, count: number): void => {
-  const el = sut.getByTestId(fieldName)
-  expect(el.childElementCount).toBe(count)
-}
-
-const expectButtonIsDisabled = (sut: RenderResult, fieldName: string, isDisabled: boolean): void => {
-  const button = sut.getByTestId(fieldName) as HTMLButtonElement
-  expect(button.disabled).toBe(isDisabled)
-}
-
-const expectStatusForField = (sut: RenderResult, fieldName: string, validationError?: string): void => {
-  const status = sut.getByTestId(`${fieldName}-status`)
-  expect(status.title).toBe(validationError || 'Tudo certo!')
-  expect(status.textContent).toBe(validationError ? '🔴' : '🟢')
-}
-
 describe('SignUp Component', () => {
   test('Should render with initial state', () => {
     const validationError = 'Campo Obrigatório'
     const { sut } = makeSut()
-    expectChildCount(sut, 'error-wrap', 0)
-    expectButtonIsDisabled(sut, 'submit', true)
-    expectStatusForField(sut, 'name', validationError)
-    expectStatusForField(sut, 'email', validationError)
-    expectStatusForField(sut, 'password', validationError)
-    expectStatusForField(sut, 'passwordConfirmation', validationError)
+    Helper.expectChildCount(sut, 'error-wrap', 0)
+    Helper.expectButtonIsDisabled(sut, 'submit', true)
+    Helper.expectStatusForField(sut, 'name', validationError)
+    Helper.expectStatusForField(sut, 'email', validationError)
+    Helper.expectStatusForField(sut, 'password', validationError)
+    Helper.expectStatusForField(sut, 'passwordConfirmation', validationError)
   })
 })

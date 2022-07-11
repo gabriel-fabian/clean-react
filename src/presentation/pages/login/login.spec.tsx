@@ -1,12 +1,12 @@
 import React from 'react'
-import { Router } from 'react-router-dom'
+import { act } from 'react-dom/test-utils'
+import { cleanup, fireEvent, render, RenderResult, screen, waitFor } from '@testing-library/react'
 import { createMemoryHistory } from 'history'
 import { faker } from '@faker-js/faker'
-import { cleanup, fireEvent, render, RenderResult, screen, waitFor } from '@testing-library/react'
+import { Router } from 'react-router-dom'
 import Login from './login'
-import { ValidationStub, AuthenticationSpy, SaveAccessTokenMock } from '@/presentation/test'
+import { ValidationStub, AuthenticationSpy, SaveAccessTokenMock, Helper } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
-import { act } from 'react-dom/test-utils'
 
 type SutTypes = {
   sut: RenderResult
@@ -57,50 +57,43 @@ const simulateValidSubmit = (sut: RenderResult, email = faker.internet.email(), 
   fireEvent.click(submitButton)
 }
 
-const expectStatusForField = (sut: RenderResult, fieldName: string, validationError?: string): void => {
-  const status = sut.getByTestId(`${fieldName}-status`)
-  expect(status.title).toBe(validationError || 'Tudo certo!')
-  expect(status.textContent).toBe(validationError ? '🔴' : '🟢')
-}
-
 describe('Login Component', () => {
   afterEach(cleanup)
 
   test('Should render with initial state', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    const errorWrap = sut.getByTestId('error-wrap')
-    expect(errorWrap.childElementCount).toBe(0)
     const submitButton = sut.getByTestId('submit') as HTMLButtonElement
     expect(submitButton.disabled).toBe(true)
-    expectStatusForField(sut, 'email', validationError)
-    expectStatusForField(sut, 'password', validationError)
+    Helper.expectChildCount(sut, 'error-wrap', 0)
+    Helper.expectStatusForField(sut, 'email', validationError)
+    Helper.expectStatusForField(sut, 'password', validationError)
   })
 
   test('Should show email error if Validation fails', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
     populateEmailField(sut)
-    expectStatusForField(sut, 'email', validationError)
+    Helper.expectStatusForField(sut, 'email', validationError)
   })
 
   test('Should show password error if Validation fails', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
     populatePasswordField(sut)
-    expectStatusForField(sut, 'password', validationError)
+    Helper.expectStatusForField(sut, 'password', validationError)
   })
 
   test('Should show valid email state if Validation succeeds', () => {
     const { sut } = makeSut()
     populateEmailField(sut)
-    expectStatusForField(sut, 'email')
+    Helper.expectStatusForField(sut, 'email')
   })
 
   test('Should show valid password state if Validation succeeds', () => {
     const { sut } = makeSut()
     populatePasswordField(sut)
-    expectStatusForField(sut, 'password')
+    Helper.expectStatusForField(sut, 'password')
   })
 
   test('Should enable submit button if form is valid', () => {
@@ -150,10 +143,9 @@ describe('Login Component', () => {
     jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error)
     simulateValidSubmit(sut)
     await waitFor(() => {
-      const errorWrap = sut.getByTestId('error-wrap')
       const errorMessage = sut.getByTestId('error-message')
       expect(errorMessage.textContent).toBe(error.message)
-      expect(errorWrap.childElementCount).toBe(1)
+      Helper.expectChildCount(sut, 'error-wrap', 1)
     })
   })
 
@@ -190,10 +182,9 @@ describe('Login Component', () => {
     jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error)
     simulateValidSubmit(sut)
     await waitFor(() => {
-      const errorWrap = sut.getByTestId('error-wrap')
       const errorMessage = sut.getByTestId('error-message')
       expect(errorMessage.textContent).toBe(error.message)
-      expect(errorWrap.childElementCount).toBe(1)
+      Helper.expectChildCount(sut, 'error-wrap', 1)
     })
   })
 
