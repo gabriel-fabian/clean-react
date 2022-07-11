@@ -2,16 +2,16 @@ import React from 'react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { faker } from '@faker-js/faker'
-import 'jest-localstorage-mock'
 import { cleanup, fireEvent, render, RenderResult, screen, waitFor } from '@testing-library/react'
 import Login from './login'
-import { ValidationStub, AuthenticationSpy } from '@/presentation/test'
+import { ValidationStub, AuthenticationSpy, SaveAccessTokenMock } from '@/presentation/test'
 import { InvalidCredentialsError } from '@/domain/errors'
 import { act } from 'react-dom/test-utils'
 
 type SutTypes = {
   sut: RenderResult
   authenticationSpy: AuthenticationSpy
+  saveAccessTokenMock: SaveAccessTokenMock
 }
 
 type SutParams = {
@@ -22,15 +22,21 @@ const history = createMemoryHistory({ initialEntries: ['/login'] })
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   const authenticationSpy = new AuthenticationSpy()
+  const saveAccessTokenMock = new SaveAccessTokenMock()
   validationStub.errorMessage = params?.validationError
   const sut = render(
     <Router location={history.location} navigator={history}>
-      <Login validation={validationStub} authentication={authenticationSpy} />
+      <Login
+        validation={validationStub}
+        authentication={authenticationSpy}
+        saveAccessToken={saveAccessTokenMock}
+      />
     </Router>
   )
   return {
     sut,
-    authenticationSpy
+    authenticationSpy,
+    saveAccessTokenMock
   }
 }
 
@@ -59,10 +65,6 @@ const expectStatusForField = (sut: RenderResult, fieldName: string, validationEr
 
 describe('Login Component', () => {
   afterEach(cleanup)
-
-  beforeEach(() => {
-    localStorage.clear()
-  })
 
   test('Should render with initial state', () => {
     const validationError = faker.random.words()
@@ -155,7 +157,7 @@ describe('Login Component', () => {
     })
   })
 
-  test.only('Should clear error message on authentication retry', async () => {
+  test('Should clear error message on authentication retry', async () => {
     const { sut, authenticationSpy } = makeSut()
     const error = new InvalidCredentialsError()
     jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error)
@@ -171,15 +173,28 @@ describe('Login Component', () => {
     })
   })
 
-  test('Should add accessToken to localstorage on success', async () => {
-    const { sut, authenticationSpy } = makeSut()
+  test('Should call SaveAccessToken on success', async () => {
+    const { sut, authenticationSpy, saveAccessTokenMock } = makeSut()
     simulateValidSubmit(sut)
     await waitFor(() => {
       sut.getByTestId('form')
-      expect(localStorage.setItem).toHaveBeenCalledWith('accessToken', authenticationSpy.account.accessToken)
+      expect(saveAccessTokenMock.accessToken).toBe(authenticationSpy.account.accessToken)
     })
     expect(history.location.pathname).toBe('/')
     expect(history.index).toBe(0)
+  })
+
+  test('Should present error if SaveAccessToken fails', async () => {
+    const { sut, saveAccessTokenMock } = makeSut()
+    const error = new InvalidCredentialsError()
+    jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error)
+    simulateValidSubmit(sut)
+    await waitFor(() => {
+      const errorWrap = sut.getByTestId('error-wrap')
+      const errorMessage = sut.getByTestId('error-message')
+      expect(errorMessage.textContent).toBe(error.message)
+      expect(errorWrap.childElementCount).toBe(1)
+    })
   })
 
   test('Should redirect to signUp page', async () => {
