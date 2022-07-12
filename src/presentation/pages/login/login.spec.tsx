@@ -130,8 +130,7 @@ describe('Login Component', () => {
     jest.spyOn(authenticationSpy, 'auth').mockRejectedValueOnce(error)
     simulateValidSubmit(sut)
     await waitFor(() => {
-      const errorMessage = sut.getByTestId('error-message')
-      expect(errorMessage.textContent).toBe(error.message)
+      Helper.testElementText(sut, 'error-message', error.message)
       Helper.expectChildCount(sut, 'error-wrap', 1)
     })
   })
