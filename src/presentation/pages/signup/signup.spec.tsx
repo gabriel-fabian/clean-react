@@ -1,6 +1,6 @@
 import React from 'react'
 import { faker } from '@faker-js/faker'
-import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react'
+import { cleanup, fireEvent, render, RenderResult, screen, waitFor } from '@testing-library/react'
 import SignUp from './signup'
 import { AddAccountSpy, Helper, ValidationStub } from '@/presentation/test'
 
@@ -29,13 +29,14 @@ const makeSut = (params?: SutParams): SutTypes => {
   }
 }
 
-const simulateValidSubmit = (sut: RenderResult, name = faker.name.findName(), email = faker.internet.email(), password = faker.internet.password()): void => {
+const simulateValidSubmit = async (sut: RenderResult, name = faker.name.findName(), email = faker.internet.email(), password = faker.internet.password()): Promise<void> => {
   Helper.populateField(sut, 'name', name)
   Helper.populateField(sut, 'email', email)
   Helper.populateField(sut, 'password', password)
   Helper.populateField(sut, 'passwordConfirmation', password)
-  const submitButton = sut.getByTestId('submit')
-  fireEvent.click(submitButton)
+  const form = screen.getByTestId('form')
+  fireEvent.submit(form)
+  await waitFor(() => form)
 }
 
 describe('SignUp Component', () => {
@@ -113,18 +114,18 @@ describe('SignUp Component', () => {
     Helper.expectButtonIsDisabled(sut, 'submit', false)
   })
 
-  test('Should show spinner on submit', () => {
+  test('Should show spinner on submit', async () => {
     const { sut } = makeSut()
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     Helper.testElementExists(sut, 'spinner')
   })
 
-  test('Should call AddAccount with correct values', () => {
+  test('Should call AddAccount with correct values', async () => {
     const { sut, addAccountSpy } = makeSut()
     const name = faker.internet.email()
     const email = faker.internet.email()
     const password = faker.internet.password()
-    simulateValidSubmit(sut, name, email, password)
+    await simulateValidSubmit(sut, name, email, password)
     expect(addAccountSpy.params).toEqual({
       name,
       email,
@@ -133,10 +134,17 @@ describe('SignUp Component', () => {
     })
   })
 
-  test('Should call AddAccount only once', () => {
+  test('Should call AddAccount only once', async () => {
     const { sut, addAccountSpy } = makeSut()
-    simulateValidSubmit(sut)
-    simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
+    await simulateValidSubmit(sut)
     expect(addAccountSpy.callsCount).toBe(1)
+  })
+
+  test('Should not call AddAccount if form is invalid', async () => {
+    const validationError = faker.random.words()
+    const { sut, addAccountSpy } = makeSut({ validationError })
+    await simulateValidSubmit(sut)
+    expect(addAccountSpy.callsCount).toBe(0)
   })
 })
