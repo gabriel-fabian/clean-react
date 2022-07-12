@@ -168,15 +168,14 @@ describe('Login Component', () => {
     jest.spyOn(saveAccessTokenMock, 'save').mockRejectedValueOnce(error)
     simulateValidSubmit(sut)
     await waitFor(() => {
-      const errorMessage = sut.getByTestId('error-message')
-      expect(errorMessage.textContent).toBe(error.message)
+      Helper.testElementText(sut, 'error-message', error.message)
       Helper.expectChildCount(sut, 'error-wrap', 1)
     })
   })
 
   test('Should redirect to signUp page', async () => {
     const { sut } = makeSut()
-    const signup = sut.getByTestId('signup')
+    const signup = sut.getByTestId('signup-link')
     fireEvent.click(signup)
     expect(history.location.pathname).toBe('/signup')
     expect(history.index).toBe(1)
