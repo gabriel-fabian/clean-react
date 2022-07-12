@@ -34,11 +34,6 @@ const simulateValidSubmit = (sut: RenderResult, name = faker.name.findName(), em
   fireEvent.click(submitButton)
 }
 
-const testElementExists = (sut: RenderResult, fieldName: string): void => {
-  const el = sut.getByTestId(fieldName)
-  expect(el).toBeTruthy()
-}
-
 describe('SignUp Component', () => {
   afterEach(cleanup)
 
@@ -117,6 +112,6 @@ describe('SignUp Component', () => {
   test('Should show spinner on submit', () => {
     const { sut } = makeSut()
     simulateValidSubmit(sut)
-    testElementExists(sut, 'spinner')
+    Helper.testElementExists(sut, 'spinner')
   })
 })
