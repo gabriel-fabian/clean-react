@@ -53,8 +53,7 @@ describe('Login Component', () => {
   test('Should render with initial state', () => {
     const validationError = faker.random.words()
     const { sut } = makeSut({ validationError })
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement
-    expect(submitButton.disabled).toBe(true)
+    Helper.expectButtonIsDisabled(sut, 'submit', true)
     Helper.expectChildCount(sut, 'error-wrap', 0)
     Helper.expectStatusForField(sut, 'email', validationError)
     Helper.expectStatusForField(sut, 'password', validationError)
@@ -90,8 +89,7 @@ describe('Login Component', () => {
     const { sut } = makeSut()
     Helper.populateField(sut, 'email')
     Helper.populateField(sut, 'password')
-    const submitButton = sut.getByTestId('submit') as HTMLButtonElement
-    expect(submitButton.disabled).toBe(false)
+    Helper.expectButtonIsDisabled(sut, 'submit', false)
   })
 
   test('Should show spinner on submit', () => {
