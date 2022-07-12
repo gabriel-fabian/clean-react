@@ -1,6 +1,6 @@
 import React from 'react'
 import { faker } from '@faker-js/faker'
-import { cleanup, render, RenderResult } from '@testing-library/react'
+import { cleanup, fireEvent, render, RenderResult } from '@testing-library/react'
 import SignUp from './signup'
 import { Helper, ValidationStub } from '@/presentation/test'
 
@@ -23,6 +23,20 @@ const makeSut = (params?: SutParams): SutTypes => {
   return {
     sut
   }
+}
+
+const simulateValidSubmit = (sut: RenderResult, name = faker.name.findName(), email = faker.internet.email(), password = faker.internet.password()): void => {
+  Helper.populateField(sut, 'name', name)
+  Helper.populateField(sut, 'email', email)
+  Helper.populateField(sut, 'password', password)
+  Helper.populateField(sut, 'passwordConfirmation', password)
+  const submitButton = sut.getByTestId('submit')
+  fireEvent.click(submitButton)
+}
+
+const testElementExists = (sut: RenderResult, fieldName: string): void => {
+  const el = sut.getByTestId(fieldName)
+  expect(el).toBeTruthy()
 }
 
 describe('SignUp Component', () => {
@@ -98,5 +112,11 @@ describe('SignUp Component', () => {
     Helper.populateField(sut, 'password')
     Helper.populateField(sut, 'passwordConfirmation')
     Helper.expectButtonIsDisabled(sut, 'submit', false)
+  })
+
+  test('Should show spinner on submit', () => {
+    const { sut } = makeSut()
+    simulateValidSubmit(sut)
+    testElementExists(sut, 'spinner')
   })
 })
