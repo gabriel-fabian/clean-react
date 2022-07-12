@@ -159,4 +159,20 @@ describe('SignUp Component', () => {
       Helper.expectChildCount(sut, 'error-wrap', 1)
     })
   })
+
+  test('Should clear error message on AddAccount retry', async () => {
+    const { sut, addAccountSpy } = makeSut()
+    const error = new EmailInUseError()
+    jest.spyOn(addAccountSpy, 'add').mockRejectedValueOnce(error)
+    await simulateValidSubmit(sut) // Populate errorMessage
+    await waitFor(() => {
+      const errorMessage = screen.queryAllByText(error.message)
+      expect(errorMessage.length).toBe(1)
+    })
+    await simulateValidSubmit(sut)
+    await waitFor(() => {
+      const errorMessage = screen.queryAllByText(error.message)
+      expect(errorMessage.length).toBe(0)
+    })
+  })
 })
