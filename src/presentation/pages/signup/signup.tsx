@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import Styles from './signup-styles.scss'
 import { Footer, FormStatus, LoginHeader, Input } from '@/presentation/components'
 import Context from '@/presentation/contexts/form/form-context'
@@ -78,7 +78,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount, saveAccessToken }: Pr
           >
             Criar Conta
           </button>
-          <span className={Styles.link}>entrar</span>
+          <Link data-testid="login-link" to="/login" className={Styles.link}>entrar</Link>
           <FormStatus />
         </form>
       </Context.Provider>
