@@ -21,7 +21,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount }: Props) => {
     emailError: '',
     passwordError: '',
     passwordConfirmationError: '',
-    messageError: ''
+    errorMessage: ''
   })
   useEffect(() => {
     setState({
@@ -50,7 +50,7 @@ const SignUp: React.FC<Props> = ({ validation, addAccount }: Props) => {
       setState({
         ...state,
         isLoading: false,
-        messageError: error.message
+        errorMessage: error.message
       })
     }
   }
