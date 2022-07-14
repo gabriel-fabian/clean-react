@@ -4,8 +4,8 @@ import { cleanup, fireEvent, render, RenderResult, screen, waitFor } from '@test
 import { createMemoryHistory } from 'history'
 import { faker } from '@faker-js/faker'
 import { Router } from 'react-router-dom'
-import Login from './login'
-import { ValidationStub, AuthenticationSpy, SaveAccessTokenMock, Helper } from '@/presentation/test'
+import { Login } from '@/presentation/pages'
+import { ValidationStub, AuthenticationSpy, SaveAccessTokenMock, Helper } from '@/tests/presentation/mocks'
 import { InvalidCredentialsError } from '@/domain/errors'
 
 type SutTypes = {

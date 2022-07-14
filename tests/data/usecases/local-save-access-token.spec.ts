@@ -1,5 +1,5 @@
-import { LocalSaveAccessToken } from './local-save-access-token'
-import { SetStorageMock } from '@/data/test/'
+import { LocalSaveAccessToken } from '@/data/usecases'
+import { SetStorageMock } from '@/tests/data/mocks'
 import { faker } from '@faker-js/faker'
 
 type SutTypes = {

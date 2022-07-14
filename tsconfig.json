@@ -13,13 +13,12 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "jsx": "react-jsx",
-    "rootDir": "src",
+    "rootDirs": ["src", "tests"],
     "baseUrl": "src",
     "paths": {
-      "@/*": ["*"]
+      "@/*": ["*"],
+      "@/tests/*": ["../tests/*"]
     }
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src", "tests"]
 }

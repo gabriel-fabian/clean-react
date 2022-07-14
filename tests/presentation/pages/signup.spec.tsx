@@ -3,8 +3,8 @@ import { faker } from '@faker-js/faker'
 import { cleanup, fireEvent, render, RenderResult, screen, waitFor } from '@testing-library/react'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
-import SignUp from './signup'
-import { AddAccountSpy, Helper, SaveAccessTokenMock, ValidationStub } from '@/presentation/test'
+import { SignUp } from '@/presentation/pages'
+import { AddAccountSpy, Helper, SaveAccessTokenMock, ValidationStub } from '@/tests/presentation/mocks'
 import { EmailInUseError } from '@/domain/errors'
 
 type SutTypes = {
