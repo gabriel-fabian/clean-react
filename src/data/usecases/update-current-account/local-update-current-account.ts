@@ -8,6 +8,6 @@ export class LocalUpdateCurrentAccount implements UpdateCurrentAccount {
   ) {}
 
   async set (account: AccountModel): Promise<void> {
-    await this.setStorage.set('account', JSON.stringify(account))
+    this.setStorage.set('account', JSON.stringify(account))
   }
 }
