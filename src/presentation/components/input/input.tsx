@@ -1,12 +1,12 @@
 /* eslint-disable react/prop-types */
 import React, { useContext } from 'react'
 import Styles from './input-styles.scss'
-import Context from '@/presentation/contexts/form/form-context'
+import { FormContext } from '@/presentation/contexts/'
 
 type Props = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>
 
 const Input: React.FC<Props> = (props: Props) => {
-  const { state, setState } = useContext(Context)
+  const { state, setState } = useContext(FormContext)
   const error = state[`${props.name}Error`]
   const handleChange = (event: React.FocusEvent<HTMLInputElement>): void => {
     setState({
