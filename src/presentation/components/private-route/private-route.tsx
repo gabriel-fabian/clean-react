@@ -2,14 +2,14 @@ import React, { useContext } from 'react'
 import { ApiContext } from '@/presentation/contexts'
 import { Navigate } from 'react-router-dom'
 
-type PrivateRouteProps = {
-  children: JSX.Element
+type Props = {
+  outlet: JSX.Element
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
+const PrivateRoute: React.FC<Props> = ({ outlet }: Props) => {
   const { getCurrentAccount } = useContext(ApiContext)
   return getCurrentAccount()?.accessToken
-    ? children
+    ? outlet
     : <Navigate to='/login' replace/>
 }
 

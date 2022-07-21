@@ -5,8 +5,7 @@ import { createMemoryHistory, MemoryHistory } from 'history'
 import { Router } from 'react-router-dom'
 import { ApiContext } from '@/presentation/contexts'
 import { mockAccountModel } from '@/tests/domain/mocks'
-import { SignUp } from '@/presentation/pages'
-import { AddAccountSpy, ValidationStub } from '@/tests/presentation/mocks'
+import { SurveyList } from '@/presentation/pages'
 
 type SutTypes = {
   history: MemoryHistory
@@ -14,17 +13,12 @@ type SutTypes = {
 
 const makeSut = (account = mockAccountModel()): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/'] })
-  const validationStub = new ValidationStub()
-  const addAccountSpy = new AddAccountSpy()
   render(
     <ApiContext.Provider value={{ getCurrentAccount: () => account }}>
       <Router location={history.location} navigator={history}>
-          <PrivateRoute>
-            <SignUp
-              addAccount={addAccountSpy}
-              validation={validationStub}
-            />
-          </PrivateRoute>
+          <PrivateRoute
+            outlet={<SurveyList />}
+          />
       </Router>
     </ApiContext.Provider>
   )
