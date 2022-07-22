@@ -5,7 +5,6 @@ import { createMemoryHistory, MemoryHistory } from 'history'
 import { Router } from 'react-router-dom'
 import { ApiContext } from '@/presentation/contexts'
 import { mockAccountModel } from '@/tests/domain/mocks'
-import { SurveyList } from '@/presentation/pages'
 
 type SutTypes = {
   history: MemoryHistory
@@ -17,7 +16,7 @@ const makeSut = (account = mockAccountModel()): SutTypes => {
     <ApiContext.Provider value={{ getCurrentAccount: () => account }}>
       <Router location={history.location} navigator={history}>
           <PrivateRoute
-            outlet={<SurveyList />}
+            outlet={<></>}
           />
       </Router>
     </ApiContext.Provider>
