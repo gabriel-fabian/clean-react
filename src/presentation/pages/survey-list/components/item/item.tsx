@@ -1,5 +1,5 @@
 import React from 'react'
-import Styles from './survey-item-styles.scss'
+import Styles from './item-styles.scss'
 import { Icon } from '@/presentation/components'
 import { SurveyModel } from '@/domain/models'
 
