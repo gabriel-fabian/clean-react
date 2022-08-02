@@ -7,11 +7,11 @@ import { ApiContext } from '@/presentation/contexts'
 import { SignUp } from '@/presentation/pages'
 import { AddAccountSpy, Helper, ValidationStub } from '@/tests/presentation/mocks'
 import { EmailInUseError } from '@/domain/errors'
-import { AccountModel } from '@/domain/models'
+import { AddAccount } from '@/domain/usecases'
 
 type SutTypes = {
   addAccountSpy: AddAccountSpy
-  setCurrentAccountMock: (account: AccountModel) => void
+  setCurrentAccountMock: (account: AddAccount.Model) => void
 }
 
 type SutParams = {
