@@ -11,12 +11,12 @@ import { faker } from '@faker-js/faker'
 
 export const mockPostRequest = (): HttpPostParams => ({
   url: faker.internet.url(),
-  body: faker.helpers.objectKey
+  body: faker.datatype.json()
 })
 
 export const mockGetRequest = (): HttpGetParams => ({
   url: faker.internet.url(),
-  headers: faker.helpers.objectKey
+  headers: faker.datatype.json()
 })
 
 export class HttpPostClientSpy<R = any> implements HttpPostClient<R> {
