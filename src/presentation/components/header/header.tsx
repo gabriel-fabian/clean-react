@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 
 export const Header: React.FC = () => {
   const navigate = useNavigate()
-  const { setCurrentAccount } = useContext(ApiContext)
+  const { setCurrentAccount, getCurrentAccount } = useContext(ApiContext)
   const logout = (event: React.MouseEvent<HTMLAnchorElement, MouseEvent>): void => {
     event.preventDefault()
     setCurrentAccount(undefined)
@@ -18,7 +18,7 @@ export const Header: React.FC = () => {
     <div className={Styles.headerContent}>
       <Logo />
       <div className={Styles.logoutWrap}>
-        <span>Fabian</span>
+        <span data-testid="username" >{getCurrentAccount().name}</span>
         <a data-testid="logout" href="#" onClick={logout}>Sair</a>
       </div>
     </div>
