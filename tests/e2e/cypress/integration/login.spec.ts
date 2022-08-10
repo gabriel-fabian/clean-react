@@ -102,4 +102,24 @@ describe('Login', () => {
     cy.getByTestId('spinner').should('not.exist')
     cy.window().then(window => assert.isOk(window.localStorage.getItem('account')))
   })
+
+  it('Should prevent multiple submits', () => {
+    cy.intercept({
+      method: 'POST',
+      url: /login/
+    }, {
+      statusCode: 200,
+      body: {
+        account: {
+          name: faker.name.findName(),
+          accessToken: faker.datatype.uuid()
+        }
+      }
+    }).as('request')
+
+    cy.getByTestId('email').type(faker.internet.email())
+    cy.getByTestId('password').type(faker.random.alphaNumeric(5))
+    cy.getByTestId('submit').dblclick()
+    cy.get('@request.all').should('have.length', 1)
+  })
 })
