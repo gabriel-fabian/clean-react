@@ -44,15 +44,44 @@ describe('Login', () => {
     cy.getByTestId('error-wrap').should('not.have.descendants')
   })
 
-  it('Should present error if invalid credential are provided', () => {
+  it('Should present invalidCredentialsError on 401', () => {
+    cy.intercept({
+      method: 'POST',
+      url: /login/
+    }, {
+      statusCode: 401,
+      body: {
+        error: faker.random.words()
+      }
+    })
+
     cy.getByTestId('email').type(faker.internet.email())
     cy.getByTestId('password').type(faker.random.alphaNumeric(5))
     cy.getByTestId('submit').click()
-    cy.getByTestId('error-wrap')
-      .getByTestId('spinner').should('exist')
-      .getByTestId('error-message').should('not.exist')
-      .getByTestId('spinner').should('not.exist')
-      .getByTestId('error-message').should('contain.text', 'Credenciais inválidas')
+    cy.getByTestId('spinner').should('not.exist')
+    cy.getByTestId('error-message').should('contain.text', 'Credenciais inválidas')
     cy.url().should('eq', `${baseUrl}/login`)
+  })
+
+  it('Should store account on localStorage if valid credentials are provided', () => {
+    cy.intercept({
+      method: 'POST',
+      url: /login/
+    }, {
+      statusCode: 200,
+      body: {
+        account: {
+          name: faker.name.findName(),
+          accessToken: faker.datatype.uuid()
+        }
+      }
+    })
+
+    cy.getByTestId('email').type(faker.internet.email())
+    cy.getByTestId('password').type(faker.random.alphaNumeric(5))
+    cy.getByTestId('submit').click()
+    cy.getByTestId('error-message').should('not.exist')
+    cy.getByTestId('spinner').should('not.exist')
+    cy.window().then(window => assert.isOk(window.localStorage.getItem('account')))
   })
 })
