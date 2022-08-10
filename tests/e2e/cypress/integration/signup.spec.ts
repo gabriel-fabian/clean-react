@@ -66,4 +66,11 @@ describe('SignUp', () => {
     FormHelper.testErrorMessage('Algo de errado aconteceu. Tente novamente em breve')
     FormHelper.testUrl('/signup')
   })
+
+  it('Should store account on localStorage if valid credentials are provided', () => {
+    Http.mockOk()
+    simulateValidSubmit()
+    cy.getByTestId('error-wrap').should('not.have.descendants')
+    FormHelper.testLocalStorageItem('account')
+  })
 })
