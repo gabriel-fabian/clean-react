@@ -45,7 +45,7 @@ describe('Login', () => {
     FormHelper.testUrl('/login')
   })
 
-  it('Should present unexpectedError on 400', () => {
+  it('Should present unexpectedError on default error cases', () => {
     Http.mockUnexpectedError()
     simulateValidSubmit()
     FormHelper.testErrorMessage('Algo de errado aconteceu. Tente novamente em breve')
