@@ -63,6 +63,24 @@ describe('Login', () => {
     cy.url().should('eq', `${baseUrl}/login`)
   })
 
+  it('Should present unexpectedError on 400', () => {
+    cy.intercept({
+      method: 'POST',
+      url: /login/
+    }, {
+      statusCode: 400,
+      body: {
+        error: faker.random.words()
+      }
+    })
+    cy.getByTestId('email').type(faker.internet.email())
+    cy.getByTestId('password').type(faker.random.alphaNumeric(5))
+    cy.getByTestId('submit').click()
+    cy.getByTestId('spinner').should('not.exist')
+    cy.getByTestId('error-message').should('contain.text', 'Algo de errado aconteceu. Tente novamente em breve')
+    cy.url().should('eq', `${baseUrl}/login`)
+  })
+
   it('Should store account on localStorage if valid credentials are provided', () => {
     cy.intercept({
       method: 'POST',
