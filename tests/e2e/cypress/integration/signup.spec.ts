@@ -3,12 +3,16 @@ import * as Http from '../support/signup-mocks'
 
 import { faker } from '@faker-js/faker'
 
-const simulateValidSubmit = (): void => {
+const populateFields = (): void => {
   cy.getByTestId('name').type(faker.name.findName())
   cy.getByTestId('email').type(faker.internet.email())
   const password = faker.random.alphaNumeric(5)
   cy.getByTestId('password').type(password)
   cy.getByTestId('passwordConfirmation').type(password)
+}
+
+const simulateValidSubmit = (): void => {
+  populateFields()
   cy.getByTestId('submit').click()
 }
 
@@ -72,5 +76,12 @@ describe('SignUp', () => {
     simulateValidSubmit()
     cy.getByTestId('error-wrap').should('not.have.descendants')
     FormHelper.testLocalStorageItem('account')
+  })
+
+  it('Should prevent multiple submits', () => {
+    Http.mockOk()
+    populateFields()
+    cy.getByTestId('submit').dblclick()
+    FormHelper.testHttpCallsCount(1)
   })
 })
