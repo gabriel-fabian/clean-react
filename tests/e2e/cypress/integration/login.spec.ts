@@ -3,10 +3,13 @@ import * as Helper from '../utils/helpers'
 import * as Http from '../utils/http-mocks'
 import { faker } from '@faker-js/faker'
 
-const path = /login/
+const path = /api\/login/
 const mockInvalidCredentialsError = (): void => Http.mockUnauthorizedError(path)
 const mockUnexpectedError = (): void => Http.mockServerError(path, 'POST')
-const mockSucces = (): void => Http.mockOk(path, 'POST', 'account')
+const mockSucces = (): void => {
+  Http.mockOk(/api\/surveys/, 'GET', 'survey-list')
+  Http.mockOk(path, 'POST', 'account', 'loginRequest')
+}
 
 const populateFields = (): void => {
   cy.getByTestId('email').type(faker.internet.email())
@@ -64,10 +67,8 @@ describe('Login', () => {
 
   it('Should store account on localStorage if valid credentials are provided', () => {
     mockSucces()
-    cy.getByTestId('email').type(faker.internet.email())
-    cy.getByTestId('password').type(faker.random.alphaNumeric(5))
-    cy.getByTestId('submit').click()
-    cy.getByTestId('error-wrap').should('not.have.descendants')
+    simulateValidSubmit()
+    Helper.testUrl('/')
     Helper.testLocalStorageItem('account')
   })
 
@@ -75,12 +76,13 @@ describe('Login', () => {
     mockSucces()
     populateFields()
     cy.getByTestId('submit').dblclick()
-    Helper.testHttpCallsCount(1)
+    cy.wait('@loginRequest')
+    cy.get('@loginRequest.all').should('have.length', 1)
   })
 
   it('Should not call submit if form is invalid', () => {
     mockSucces()
     cy.getByTestId('email').type(faker.internet.email()).type('{enter}')
-    Helper.testHttpCallsCount(0)
+    cy.get('@loginRequest.all').should('have.length', 0)
   })
 })
