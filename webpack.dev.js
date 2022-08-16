@@ -24,6 +24,7 @@ module.exports = merge(common, {
       }]
     }]
   },
+  devtool: 'inline-source-map',
   devServer: {
     static: {
       directory: './public'
@@ -38,7 +39,8 @@ module.exports = merge(common, {
       'process.env.API_URL': JSON.stringify('https://cleannode-survey-api.herokuapp.com/api')
     }),
     new HtmlWebpackPlugin({
-      template: '/template.dev.html'
+      template: '/template.dev.html',
+      favicon: './public/favicon.png'
     })
   ]
 })
