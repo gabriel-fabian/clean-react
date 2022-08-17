@@ -14,6 +14,7 @@
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "jest --runInBand --coverage",
     "test:cypress": "cypress open",
+    "test:cypress:cli": "cypress run",
     "prepare": "husky install"
   },
   "author": "Gabriel Fabian",
