@@ -4,12 +4,12 @@ import React from 'react'
 
 const Loading: React.FC = () => {
   return (
-    <div className={Styles.loadingWrap}>
-          <div className={Styles.loading}>
-            <span>Aguarde...</span>
-            <Spinner isNegative={true}/>
-          </div>
-        </div>
+    <div data-testid="loading" className={Styles.loadingWrap}>
+      <div className={Styles.loading}>
+        <span>Aguarde...</span>
+        <Spinner isNegative={true}/>
+      </div>
+    </div>
   )
 }
 

@@ -1,13 +1,20 @@
 import Styles from './survey-result-styles.scss'
-import { Calendar, Footer, Header, Loading } from '@/presentation/components'
-import React from 'react'
+import { Calendar, Error, Footer, Header, Loading } from '@/presentation/components'
+import { LoadSurveyResult } from '@/domain/usecases'
+import React, { useState } from 'react'
 
 const SurveyResult: React.FC = () => {
+  const [state] = useState({
+    isLoading: false,
+    error: '',
+    SurveyResult: null as LoadSurveyResult.Model
+  })
+
   return (
     <div className={Styles.surveyResultWrap}>
       <Header />
-      <div className={Styles.contentWrap}>
-        {true &&
+      <div data-testid="survey-result" className={Styles.contentWrap}>
+        {state.SurveyResult &&
           <>
           <hgroup>
             <Calendar date={new Date()} className={Styles.calendarWrap}/>
@@ -31,7 +38,8 @@ const SurveyResult: React.FC = () => {
             </li>
           </ul>
           <button>Voltar</button>
-          {false && <Loading />}
+          {state.isLoading && <Loading />}
+          {state.error && <Error error={state.error} reload={() => {}} />}
           </>
         }
       </div>
