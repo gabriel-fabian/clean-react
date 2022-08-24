@@ -1,4 +1,4 @@
-import { MakeLogin, MakeSignUp, MakeSurveyList } from '@/main/factories/pages'
+import { MakeLogin, MakeSignUp, MakeSurveyList, MakeSurveyResult } from '@/main/factories/pages'
 import { getCurrentAccountAdapter, setCurrentAccountAdapter } from '@/main/adapters'
 import { ApiContext } from '@/presentation/contexts'
 import { PrivateRoute } from '@/presentation/components'
@@ -17,6 +17,7 @@ const Router: React.FC = () => {
           <Route path="/login" element={<MakeLogin />} />
           <Route path="/signup" element={<MakeSignUp />} />
           <Route path="/" element={<PrivateRoute outlet={<MakeSurveyList />}/>} />
+          <Route path="/surveys/:id" element={<PrivateRoute outlet={<MakeSurveyResult />}/>} />
         </Routes>
       </BrowserRouter>
     </ApiContext.Provider>
