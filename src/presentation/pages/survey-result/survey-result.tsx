@@ -8,15 +8,15 @@ type Props = {
 }
 
 const SurveyResult: React.FC<Props> = ({ loadSurveyResult }: Props) => {
-  const [state] = useState({
+  const [state, setState] = useState({
     isLoading: false,
     error: '',
-    SurveyResult: null as LoadSurveyResult.Model
+    surveyResult: null as LoadSurveyResult.Model
   })
 
   useEffect(() => {
     loadSurveyResult.load()
-      .then()
+      .then(surveyResult => setState(old => ({ ...old, surveyResult })))
       .catch()
   }, [])
 
@@ -24,28 +24,20 @@ const SurveyResult: React.FC<Props> = ({ loadSurveyResult }: Props) => {
     <div className={Styles.surveyResultWrap}>
       <Header />
       <div data-testid="survey-result" className={Styles.contentWrap}>
-        {state.SurveyResult &&
+        {state.surveyResult &&
           <>
           <hgroup>
-            <Calendar date={new Date()} className={Styles.calendarWrap}/>
-            <h2>Qual é o seu framework web favorito?</h2>
+            <Calendar date={state.surveyResult.date} className={Styles.calendarWrap}/>
+            <h2 data-testid="question">{state.surveyResult.question}</h2>
           </hgroup>
-          <ul>
-            <li>
-              <img src="https://fordevs.herokuapp.com/static/img/logo-react.png" />
-              <span className={Styles.answer}>ReactJS</span>
-              <span className={Styles.percent}>50%</span>
-            </li>
-            <li className={Styles.active}>
-              <img src="https://fordevs.herokuapp.com/static/img/logo-react.png" />
-              <span className={Styles.answer}>ReactJS</span>
-              <span className={Styles.percent}>50%</span>
-            </li>
-            <li>
-              <img src="https://fordevs.herokuapp.com/static/img/logo-react.png" />
-              <span className={Styles.answer}>ReactJS</span>
-              <span className={Styles.percent}>50%</span>
-            </li>
+          <ul data-testid="answers">
+            {state.surveyResult.answers.map(answer =>
+              <li data-testid="answer-wrap" key={answer.answer} className={answer.isCurrentAccountAnswer ? Styles.active : ' '}>
+                <img data-testid="image" src={answer.image} alt={answer.answer} />
+                <span data-testid="answer" className={Styles.answer}>{answer.answer}</span>
+                <span data-testid="percent" className={Styles.percent}>{answer.percent}%</span>
+              </li>
+            )}
           </ul>
           <button>Voltar</button>
           {state.isLoading && <Loading />}
