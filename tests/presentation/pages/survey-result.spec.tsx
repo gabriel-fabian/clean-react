@@ -67,7 +67,7 @@ describe('SurveyResult Component', () => {
         const images = screen.queryAllByTestId('image')
         expect(images[0]).toHaveAttribute('src', surveyResult.answers[0].image)
         expect(images[0]).toHaveAttribute('alt', surveyResult.answers[0].answer)
-        expect(images[1]).not.toHaveAttribute('src')
+        expect(images[1]).toBeFalsy()
         const percents = screen.queryAllByTestId('percent')
         expect(percents[0]).toHaveTextContent(`${surveyResult.answers[0].percent}%`)
         expect(percents[1]).toHaveTextContent(`${surveyResult.answers[1].percent}%`)
