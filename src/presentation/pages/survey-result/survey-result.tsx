@@ -2,6 +2,7 @@ import Styles from './survey-result-styles.scss'
 import { Calendar, Error, Footer, Header, Loading } from '@/presentation/components'
 import { useErrorHandler } from '@/presentation/hooks'
 import { LoadSurveyResult } from '@/domain/usecases'
+import { useNavigate } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 
 type Props = {
@@ -19,6 +20,7 @@ const SurveyResult: React.FC<Props> = ({ loadSurveyResult }: Props) => {
     reload: false
   })
   const reload = (): void => { setState(old => ({ isLoading: false, surveyResult: null, error: '', reload: !old.reload })) }
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadSurveyResult.load()
@@ -45,7 +47,7 @@ const SurveyResult: React.FC<Props> = ({ loadSurveyResult }: Props) => {
               </li>
             )}
           </ul>
-          <button>Voltar</button>
+          <button data-testid="back-button" onClick={() => navigate(-1)}>Voltar</button>
           </>
         }
         {state.isLoading && <Loading />}
