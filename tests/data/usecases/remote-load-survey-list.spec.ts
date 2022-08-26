@@ -1,17 +1,17 @@
 import { RemoteLoadSurveyList } from '@/data/usecases'
 import { HttpStatusCode } from '@/data/protocols/http'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
-import { HttpGetClientSpy, mockRemoteSurveyListModel } from '@/tests/data/mocks'
+import { HttpClientSpy, mockRemoteSurveyListModel } from '@/tests/data/mocks'
 
 import { faker } from '@faker-js/faker'
 
 type SutTypes = {
   sut: RemoteLoadSurveyList
-  httpGetClientSpy: HttpGetClientSpy<RemoteLoadSurveyList.Model[]>
+  httpGetClientSpy: HttpClientSpy<RemoteLoadSurveyList.Model[]>
 }
 
 const makeSut = (url = faker.internet.url()): SutTypes => {
-  const httpGetClientSpy = new HttpGetClientSpy<RemoteLoadSurveyList.Model[]>()
+  const httpGetClientSpy = new HttpClientSpy<RemoteLoadSurveyList.Model[]>()
   const sut = new RemoteLoadSurveyList(url, httpGetClientSpy)
   return {
     sut,
@@ -20,11 +20,12 @@ const makeSut = (url = faker.internet.url()): SutTypes => {
 }
 
 describe('RemoteLoadSurveyList', () => {
-  test('Should call HttpGetClient with correct URL', async () => {
+  test('Should call HttpGetClient with correct URL and method', async () => {
     const url = faker.internet.url()
     const { sut, httpGetClientSpy } = makeSut(url)
     await sut.loadAll()
     expect(httpGetClientSpy.url).toBe(url)
+    expect(httpGetClientSpy.method).toBe('get')
   })
 
   test('Throw AccessDeniedError if HttpGetClient returns 403', async () => {
