@@ -2,7 +2,6 @@ import { RemoteLoadSurveyResult } from '@/data/usecases'
 import { HttpStatusCode } from '@/data/protocols/http'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import { HttpClientSpy, mockRemoteSurveyResultModel } from '@/tests/data/mocks'
-import { mockSurveyListModel } from '@/tests/domain/mocks'
 import { faker } from '@faker-js/faker'
 
 type SutTypes = {
@@ -25,7 +24,7 @@ describe('RemoteLoadSurveyResult', () => {
     const { sut, httpGetClientSpy } = makeSut(url)
     httpGetClientSpy.response = {
       statusCode: HttpStatusCode.ok,
-      body: mockSurveyListModel()
+      body: mockRemoteSurveyResultModel()
     }
     await sut.load()
     expect(httpGetClientSpy.url).toBe(url)
