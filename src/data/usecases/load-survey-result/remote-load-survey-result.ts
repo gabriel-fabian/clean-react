@@ -1,4 +1,5 @@
 import { HttpClient, HttpStatusCode } from '@/data/protocols/http'
+import { RemoteSurveyResultModel } from '@/data/models'
 import { LoadSurveyResult } from '@/domain/usecases'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 
@@ -23,15 +24,5 @@ export class RemoteLoadSurveyResult implements LoadSurveyResult {
 }
 
 export namespace RemoteLoadSurveyResult {
-  export type Model = {
-    question: string
-    date: string
-    answers: Array<{
-      image?: string
-      answer: string
-      count: number
-      percent: number
-      isCurrentAccountAnswer: boolean
-    }>
-  }
+  export type Model = RemoteSurveyResultModel
 }
