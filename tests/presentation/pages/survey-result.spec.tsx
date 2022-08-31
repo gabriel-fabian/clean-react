@@ -12,6 +12,7 @@ import {
 import { createMemoryHistory, MemoryHistory } from 'history'
 import { Router } from 'react-router-dom'
 import React from 'react'
+import { act } from 'react-dom/test-utils'
 
 type SutTypes = {
   loadSurveyResultSpy: LoadSurveyResultSpy
@@ -69,7 +70,7 @@ describe('SurveyResult Component', () => {
     })
     loadSurveyResultSpy.surveyResult = surveyResult
     makeSut({ loadSurveyResultSpy })
-    await waitFor(() => { screen.getByText(surveyResult.question) })
+    await waitFor(() => { screen.getByTestId('back-button') })
       .then(() => {
         expect(screen.getByTestId('day')).toHaveTextContent('10')
         expect(screen.getByTestId('month').textContent).toBe('jan')
@@ -188,5 +189,37 @@ describe('SurveyResult Component', () => {
         expect(setCurrentAccountMock).toHaveBeenCalledWith(undefined)
         expect(history.location.pathname).toBe('/login')
       })
+  })
+
+  test('Should present SurveyResult data on SaveSurveyResult success', async () => {
+    const loadSurveyResultSpy = new LoadSurveyResultSpy()
+    const surveyResult = Object.assign(mockSurveyResultModel(), {
+      date: new Date('2021-02-13T00:00:00')
+    })
+    loadSurveyResultSpy.surveyResult = surveyResult
+    makeSut({ loadSurveyResultSpy })
+    await waitFor(() => { screen.getByTestId('back-button') })
+      .then(() => {
+        const answersWrap = screen.queryAllByTestId('answer-wrap')
+        act(() => {
+          fireEvent.click(answersWrap[1])
+        })
+        expect(screen.queryByTestId('loading')).toBeInTheDocument()
+        expect(screen.getByTestId('day')).toHaveTextContent('13')
+        expect(screen.getByTestId('month').textContent).toBe('fev')
+        expect(screen.getByTestId('year')).toHaveTextContent('2021')
+        expect(screen.getByTestId('question')).toHaveTextContent(surveyResult.question)
+        expect(screen.getByTestId('answers').childElementCount).toBe(2)
+        expect(answersWrap[0]).toHaveClass('active')
+        expect(answersWrap[1]).not.toHaveClass('active')
+        const images = screen.queryAllByTestId('image')
+        expect(images[0]).toHaveAttribute('src', surveyResult.answers[0].image)
+        expect(images[0]).toHaveAttribute('alt', surveyResult.answers[0].answer)
+        expect(images[1]).toBeFalsy()
+        const percents = screen.queryAllByTestId('percent')
+        expect(percents[0]).toHaveTextContent(`${surveyResult.answers[0].percent}%`)
+        expect(percents[1]).toHaveTextContent(`${surveyResult.answers[1].percent}%`)
+      })
+    await waitFor(() => expect(screen.queryByTestId('loading')).not.toBeInTheDocument())
   })
 })
