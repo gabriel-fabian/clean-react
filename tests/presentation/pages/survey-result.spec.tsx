@@ -117,4 +117,14 @@ describe('SurveyResult Component', () => {
         expect(history.location.pathname).toBe('/')
       })
   })
+
+  test('Should not present on active answer click', async () => {
+    makeSut()
+    await waitFor(() => { screen.getByTestId('back-button') })
+      .then(() => {
+        const answersWrap = screen.queryAllByTestId('answer-wrap')
+        fireEvent.click(answersWrap[0])
+        expect(screen.queryByTestId('loading')).not.toBeInTheDocument()
+      })
+  })
 })
