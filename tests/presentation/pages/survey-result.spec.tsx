@@ -173,4 +173,20 @@ describe('SurveyResult Component', () => {
         expect(screen.getByTestId('error')).toHaveTextContent(error.message)
       })
   })
+
+  test('Should logout on AccessDeniedError', async () => {
+    const saveSurveyResultSpy = new SaveSurveyResultSpy()
+    jest.spyOn(saveSurveyResultSpy, 'save').mockRejectedValueOnce(new AccessDeniedError())
+    const { setCurrentAccountMock, history } = makeSut({ saveSurveyResultSpy })
+    await waitFor(() => { screen.getByTestId('back-button') })
+      .then(() => {
+        const answersWrap = screen.queryAllByTestId('answer-wrap')
+        fireEvent.click(answersWrap[1])
+      })
+    await waitFor(() => { screen.getByTestId('survey-result') })
+      .then(() => {
+        expect(setCurrentAccountMock).toHaveBeenCalledWith(undefined)
+        expect(history.location.pathname).toBe('/login')
+      })
+  })
 })
