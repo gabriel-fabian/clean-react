@@ -1,10 +1,12 @@
-import React, { useEffect, useContext, useState } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
 import Styles from './signup-styles.scss'
-import { Footer, FormStatus, LoginHeader, Input, SubmitButton } from '@/presentation/components'
-import { ApiContext, FormContext } from '@/presentation/contexts/'
+import { Input, signUpState, SubmitButton, FormStatus } from './components'
+import { Footer, LoginHeader } from '@/presentation/components'
+import { ApiContext } from '@/presentation/contexts/'
 import { Validation } from '@/presentation/protocols/validation'
 import { AddAccount } from '@/domain/usecases'
+import { useRecoilState } from 'recoil'
+import { useNavigate, Link } from 'react-router-dom'
+import React, { useEffect, useContext } from 'react'
 
 type Props = {
   validation: Validation
@@ -14,19 +16,7 @@ type Props = {
 const SignUp: React.FC<Props> = ({ validation, addAccount }: Props) => {
   const { setCurrentAccount } = useContext(ApiContext)
   const navigate = useNavigate()
-  const [state, setState] = useState({
-    isLoading: false,
-    isFormInvalid: true,
-    name: '',
-    email: '',
-    password: '',
-    passwordConfirmation: '',
-    nameError: '',
-    emailError: '',
-    passwordError: '',
-    passwordConfirmationError: '',
-    errorMessage: ''
-  })
+  const [state, setState] = useRecoilState(signUpState)
 
   useEffect(() => { validate('name') }, [state.name])
   useEffect(() => { validate('email') }, [state.email])
@@ -71,7 +61,6 @@ const SignUp: React.FC<Props> = ({ validation, addAccount }: Props) => {
   return (
     <div className={Styles.signupWrap}>
       <LoginHeader />
-      <FormContext.Provider value={{ state, setState }}>
         <form data-testid="form" className={Styles.form} onSubmit={handleSubmit}>
           <h2>Criar Conta</h2>
           <Input type="text" name="name" placeholder="Digite seu nome"/>
@@ -82,7 +71,6 @@ const SignUp: React.FC<Props> = ({ validation, addAccount }: Props) => {
           <Link data-testid="login-link" to="/login" className={Styles.link}>entrar</Link>
           <FormStatus />
         </form>
-      </FormContext.Provider>
       <Footer />
     </div>
   )
