@@ -4,7 +4,7 @@ import { Footer, LoginHeader, currentAccountState } from '@/presentation/compone
 import { Validation } from '@/presentation/protocols/validation'
 import { Authentication } from '@/domain/usecases'
 import React, { useEffect } from 'react'
-import { useRecoilState, useRecoilValue } from 'recoil'
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil'
 import { Link, useNavigate } from 'react-router-dom'
 
 type Props = {
@@ -13,12 +13,14 @@ type Props = {
 }
 
 const Login: React.FC<Props> = ({ validation, authentication }: Props) => {
+  const resetLoginState = useResetRecoilState(loginState)
   const { setCurrentAccount } = useRecoilValue(currentAccountState)
   const navigate = useNavigate()
   const [state, setState] = useRecoilState(loginState)
 
-  useEffect(() => { validate('email') }, [state.email])
-  useEffect(() => { validate('password') }, [state.password])
+  useEffect(() => resetLoginState, [])
+  useEffect(() => validate('email'), [state.email])
+  useEffect(() => validate('password'), [state.password])
 
   const validate = (field: string): void => {
     const { email, password } = state
