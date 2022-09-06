@@ -1,19 +1,16 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { SurveyResult } from '@/presentation/pages'
-import { currentAccountState } from '@/presentation/components'
 import { AccountModel } from '@/domain/models'
 import { AccessDeniedError, UnexpectedError } from '@/domain/errors'
 import {
-  mockAccountModel,
   LoadSurveyResultSpy,
   mockSurveyResultModel,
   SaveSurveyResultSpy
 } from '@/tests/domain/mocks'
+import { renderWithHistory } from '@/tests/presentation/mocks'
+
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import { createMemoryHistory, MemoryHistory } from 'history'
-import { Router } from 'react-router-dom'
 import { act } from 'react-dom/test-utils'
-import { RecoilRoot } from 'recoil'
-import React from 'react'
 
 type SutTypes = {
   loadSurveyResultSpy: LoadSurveyResultSpy
@@ -27,20 +24,15 @@ type SutParams = {
   saveSurveyResultSpy?: SaveSurveyResultSpy
 }
 
-const makeSut = ({ loadSurveyResultSpy = new LoadSurveyResultSpy(), saveSurveyResultSpy = new SaveSurveyResultSpy() }: SutParams = {}): SutTypes => {
+const makeSut = ({
+  loadSurveyResultSpy = new LoadSurveyResultSpy(),
+  saveSurveyResultSpy = new SaveSurveyResultSpy()
+}: SutParams = {}): SutTypes => {
   const history = createMemoryHistory({ initialEntries: ['/', '/surveys/any_id'] })
-  const setCurrentAccountMock = jest.fn()
-  const mockedState = { setCurrentAccount: setCurrentAccountMock, getCurrentAccount: () => mockAccountModel() }
-  render(
-    <RecoilRoot initializeState={({ set }) => set(currentAccountState, mockedState)}>
-      <Router location={history.location} navigator={history}>
-        <SurveyResult
-          loadSurveyResult={loadSurveyResultSpy}
-          saveSurveyResult={saveSurveyResultSpy}
-        />
-      </Router>
-    </RecoilRoot>
-  )
+  const { setCurrentAccountMock } = renderWithHistory({
+    history,
+    Page: () => SurveyResult({ loadSurveyResult: loadSurveyResultSpy, saveSurveyResult: saveSurveyResultSpy })
+  })
   return {
     loadSurveyResultSpy,
     saveSurveyResultSpy,
