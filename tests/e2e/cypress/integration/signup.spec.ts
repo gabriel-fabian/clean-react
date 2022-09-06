@@ -13,7 +13,7 @@ const mockSucces = (): void => {
 }
 
 const populateFields = (): void => {
-  cy.getByTestId('name').type(faker.name.findName())
+  cy.getByTestId('name').type(faker.name.fullName())
   cy.getByTestId('email').type(faker.internet.email())
   const password = faker.random.alphaNumeric(5)
   cy.getByTestId('password').type(password)
@@ -61,7 +61,7 @@ describe('SignUp', () => {
   })
 
   it('Should present valid state if form is valid', () => {
-    cy.getByTestId('name').type(faker.name.findName())
+    cy.getByTestId('name').type(faker.name.fullName())
     FormHelper.testInputStatus('name')
     cy.getByTestId('email').type(faker.internet.email())
     FormHelper.testInputStatus('email')

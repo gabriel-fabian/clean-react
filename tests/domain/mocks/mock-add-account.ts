@@ -5,7 +5,7 @@ import { faker } from '@faker-js/faker'
 export const mockAddAccountParams = (): AddAccount.Params => {
   const password = faker.internet.password()
   return {
-    name: faker.name.findName(),
+    name: faker.name.fullName(),
     email: faker.internet.email(),
     password: password,
     passwordConfirmation: password
