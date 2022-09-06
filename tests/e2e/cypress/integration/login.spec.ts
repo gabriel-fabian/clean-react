@@ -33,6 +33,14 @@ describe('Login', () => {
     cy.getByTestId('error-wrap').should('not.have.descendants')
   })
 
+  it('Should reset state on page load', () => {
+    cy.getByTestId('email').type(faker.internet.email())
+    FormHelper.testInputStatus('email')
+    cy.getByTestId('signup-link').click()
+    cy.getByTestId('login-link').click()
+    FormHelper.testInputStatus('email', 'Campo obrigatório')
+  })
+
   it('Should present error state if form is invalid', () => {
     cy.getByTestId('email').type(faker.random.word())
     FormHelper.testInputStatus('email', 'Valor inválido')
