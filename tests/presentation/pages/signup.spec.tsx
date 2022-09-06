@@ -1,13 +1,14 @@
 import { createMemoryHistory } from 'history'
-import { ApiContext } from '@/presentation/contexts'
 import { SignUp } from '@/presentation/pages'
-import { AddAccountSpy, Helper, ValidationStub } from '@/tests/presentation/mocks'
+import { currentAccountState } from '@/presentation/components'
 import { EmailInUseError } from '@/domain/errors'
 import { AddAccount } from '@/domain/usecases'
-import { RecoilRoot } from 'recoil'
+import { AddAccountSpy, Helper, ValidationStub } from '@/tests/presentation/mocks'
+import { mockAccountModel } from '@/tests/domain/mocks'
 import { fireEvent, render, waitFor, screen } from '@testing-library/react'
 import { Router } from 'react-router-dom'
 import { faker } from '@faker-js/faker'
+import { RecoilRoot } from 'recoil'
 import React from 'react'
 
 type SutTypes = {
@@ -25,16 +26,15 @@ const makeSut = (params?: SutParams): SutTypes => {
   validationStub.errorMessage = params?.validationError
   const addAccountSpy = new AddAccountSpy()
   const setCurrentAccountMock = jest.fn()
+  const mockedState = { setCurrentAccount: setCurrentAccountMock, getCurrentAccount: () => mockAccountModel() }
   render(
-    <RecoilRoot>
-      <ApiContext.Provider value={{ setCurrentAccount: setCurrentAccountMock }}>
-        <Router location={history.location} navigator={history}>
-          <SignUp
-            validation={validationStub}
-            addAccount={addAccountSpy}
-          />
-        </Router>
-      </ApiContext.Provider>
+    <RecoilRoot initializeState={({ set }) => set(currentAccountState, mockedState)}>
+      <Router location={history.location} navigator={history}>
+        <SignUp
+          validation={validationStub}
+          addAccount={addAccountSpy}
+        />
+      </Router>
     </RecoilRoot>
   )
   return {
@@ -190,10 +190,10 @@ describe('SignUp Component', () => {
   test('Should call SaveAccessToken on success', async () => {
     const { addAccountSpy, setCurrentAccountMock } = makeSut()
     await simulateValidSubmit()
-    await waitFor(() => {
-      screen.getByTestId('form')
-      expect(setCurrentAccountMock).toHaveBeenCalledWith(addAccountSpy.account)
-    })
+    await waitFor(() => { screen.getByTestId('form') })
+      .then(() => {
+        expect(setCurrentAccountMock).toHaveBeenCalledWith(addAccountSpy.account)
+      })
     expect(history.location.pathname).toBe('/')
     expect(history.index).toBe(0)
   })
